@@ -52,7 +52,7 @@ describe('App component', () => {
 ```
 
  When you have tests that are similar inside of a particular component, you have the ability to nest them inside a nested `describe` call, you can also nest beforeEach's and they're exclusive to the describe blocks. As we want to test the case in which the user clicks on a text area and starts entering some text, we can test this by using the simulate function. It's a tool which simulates fake events inside of our component's Html.
- 
+
 ```js
 import { renderComponent, expect } from './../test_helper';
 import CommentBox from './../../src/components/CommentBox';
@@ -91,5 +91,39 @@ describe('Comment', () => {
   });
 });
 
+
+```
+
+When importing action creators, the docs recommend to bind it inside a function mapDispatchToProps, but you can also import all of the action creators as `actions` and pass it into the second argument of the connect function as so:
+```js
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from './../actions/index';
+
+class CommentBox extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { comment: '' };
+  }
+  handleChange = ev => {
+    this.setState({ comment: ev.target.value });
+  };
+
+  handleSubmit = ev => {
+    ev.preventDefault();
+    this.props.saveComment(this.state.comment);
+    this.setState({ comment: '' });
+  };
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit} className="comment-box">
+        <textarea onChange={this.handleChange} value={this.state.comment} />
+        <button action="submit">Submit comment</button>
+      </form>
+    );
+  }
+}
+
+export default connect(null, actions)(CommentBox);
 
 ```
