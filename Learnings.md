@@ -9,7 +9,7 @@ Describe is used to convey to other developers that a certain number of tests ar
 - expect
 To make a single assertion about a target.
 
-
+The purpose of chai is to provide some very common, low-level, default assertions.
 ```js
 //use describe to group together similar tests
 
@@ -125,5 +125,28 @@ class CommentBox extends Component {
 }
 
 export default connect(null, actions)(CommentBox);
+
+```
+
+### Reducers
+When testing reducers, we're going to test the default case by passing in an action that we know the reducer isn't supposed to respond to/work with. The purpose of this is to test the initial state of the reducer, to make sure the array that we defaulted the state to will never be changed into something else.
+
+The second thing that we want to test is to test each possible action that the reducer cares about. If we had an application with 20 different action types, but our reducer only cared about one, we would only test that one action type.
+
+```js
+import { expect } from './../test_helper';
+import commentReducer from './../../src/reducers/comments';
+import { SAVE_COMMENT } from './../../src/actions/Types';
+
+describe('Comments Reducer', () => {
+  it('handles action with unknown type', () => {
+    expect(commentReducer(undefined, {})).to.eql([]);
+  });
+  it('SAVE_COMMENT', () => {
+    const action = { type: SAVE_COMMENT, payload: 'new comment' };
+    expect(commentReducer([], action)).to.eql(['new comment']);
+  });
+});
+
 
 ```
